@@ -33,7 +33,7 @@ jobs:
       - name: Build
         env:
           NODE_OPTIONS: --max-old-space-size=8192
-        run: pnpm build:example
+        run: pnpm build:test
       # 6、拷贝到服务器
       - name: Copy
         uses: garygrossgarten/github-action-scp@release
