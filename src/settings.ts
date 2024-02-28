@@ -6,7 +6,6 @@ const globalSettings: Settings.all = {
   // 请在此处编写或粘贴配置代码
   menu: {
     menuMode: 'side',
-    isRounded: true,
     enableSubMenuCollapseButton: true,
     enableHotkeys: true,
   },
