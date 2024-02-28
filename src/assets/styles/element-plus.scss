@@ -11,7 +11,13 @@
     ),
     "danger": (
       "base": #ff4d4f
-    )
+    ),
+    "error": (
+      "base": #ff4d4f,
+    ),
+    "info": (
+      "base": #909399,
+    ),
   )
 );
 @use "element-plus/theme-chalk/src/index.scss" as *;
