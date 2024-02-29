@@ -44,10 +44,11 @@ watch(() => userStore.avatar, () => {
       ]" class="flex-center cursor-pointer px-2"
     >
       <div class="flex-center gap-1">
-        <img v-if="userStore.avatar && !avatarError" :src="userStore.avatar" :onerror="() => (avatarError = true)" class="h-[24px] w-[24px] rounded-full">
-        <SvgIcon v-else name="i-carbon:user-avatar-filled-alt" :size="26" class="text-gray-400" />
+        <img v-if="userStore.avatar && !avatarError" :src="userStore.avatar" :onerror="() => (avatarError = true)" class="h-[28px] w-[28px] rounded-full">
+        <img v-else-if="userStore.gender === 1" src="@/assets/images/avatar/male.png" class="h-[28px] w-[28px] rounded-full">
+        <img v-else-if="userStore.gender === 2" src="@/assets/images/avatar/female.png" class="h-[28px] w-[28px] rounded-full">
+        <img v-else src="@/assets/images/avatar/unknown.png" class="h-[28px] w-[28px] rounded-full">
         {{ userStore.account }}
-        <SvgIcon name="i-ep:caret-bottom" />
       </div>
     </HDropdownMenu>
   </div>

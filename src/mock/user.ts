@@ -12,7 +12,8 @@ export default defineFakeRoute([
         data: Mock.mock({
           account: body.account,
           token: `${body.account}_@string`,
-          avatar: '../assets/images/avatar/male.png',
+          gender: 1,
+          avatar: '',
         }),
       }
     },
