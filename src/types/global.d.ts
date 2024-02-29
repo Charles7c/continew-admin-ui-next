@@ -78,6 +78,11 @@ declare namespace Settings {
      */
     menuMode?: 'side' | 'head' | 'single'
     /**
+     * 显示主导航
+     * @默认值 `true`
+     */
+    enableMainMenu?: boolean
+    /**
      * 切换主导航是否跳转页面
      * @默认值 `false`
      */

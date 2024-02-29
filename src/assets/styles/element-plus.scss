@@ -18,7 +18,13 @@
     "info": (
       "base": #909399,
     ),
-  )
+  ),
+  $border-radius: (
+    "base": 2px,
+  ),
+  $tag: (
+    "border-radius": 2px,
+  ),
 );
 @use "element-plus/theme-chalk/src/index.scss" as *;
 @use "./element-plus.dark.scss" as *;

@@ -3,26 +3,54 @@ import type { RecursiveRequired, Settings } from '#/global'
 import settingsDefault from '@/settings.default'
 
 const globalSettings: Settings.all = {
-  // 请在此处编写或粘贴配置代码
+  app: {
+    colorScheme: 'light',
+    enablePermission: false,
+    enableProgress: true,
+    enableDynamicTitle: false,
+    routeBaseOn: 'frontend',
+  },
+  home: {
+    enable: true,
+    title: '主页',
+    fullPath: '/',
+  },
+  layout: {
+    enableMobileAdaptation: true,
+  },
   menu: {
-    menuMode: 'side',
+    baseOn: 'frontend',
+    menuMode: 'head',
+    enableMainMenu: false,
+    switchMainMenuAndPageJump: false,
+    subMenuUniqueOpened: true,
+    subMenuCollapse: false,
     enableSubMenuCollapseButton: true,
-    enableHotkeys: true,
+    enableHotkeys: false,
+    isRounded: false,
   },
   topbar: {
-    mode: 'fixed',
-    switchTabbarAndToolbar: true,
+    mode: 'static',
+    switchTabbarAndToolbar: false,
   },
   tabbar: {
-    enable: true,
+    enable: false,
     style: 'fashion',
     enableIcon: true,
     enableHotkeys: true,
   },
   toolbar: {
+    breadcrumb: false,
+    navSearch: true,
     fullscreen: true,
-    pageReload: true,
+    pageReload: false,
     colorScheme: true,
+  },
+  mainPage: {
+    enableHotkeys: true,
+  },
+  navSearch: {
+    enableHotkeys: true,
   },
   copyright: {
     enable: true,

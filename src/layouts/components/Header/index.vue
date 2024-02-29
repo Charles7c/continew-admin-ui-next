@@ -34,6 +34,7 @@ function handlerMouserScroll(event: WheelEvent) {
             <div class="menu flex of-hidden transition-all">
               <template v-for="(item, index) in menuStore.allMenus" :key="index">
                 <div
+                  v-if="settingsStore.settings.menu.enableMainMenu"
                   class="menu-item relative transition-all" :class="{
                     'active': index === menuStore.actived,
                     'px-1 py-2': settingsStore.settings.menu.isRounded,
@@ -107,11 +108,11 @@ header {
 
     .logo {
       width: initial;
-      height: 40px;
+      height: 33px;
     }
 
     span {
-      font-size: 20px;
+      font-size: 18px;
       color: var(--g-header-color);
       letter-spacing: 1px;
     }

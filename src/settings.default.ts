@@ -21,12 +21,13 @@ const globalSettingsDefault: RecursiveRequired<Settings.all> = {
   menu: {
     baseOn: 'frontend',
     menuMode: 'side',
-    isRounded: false,
+    enableMainMenu: true,
     switchMainMenuAndPageJump: false,
     subMenuUniqueOpened: true,
     subMenuCollapse: false,
     enableSubMenuCollapseButton: false,
     enableHotkeys: false,
+    isRounded: false,
   },
   topbar: {
     mode: 'static',

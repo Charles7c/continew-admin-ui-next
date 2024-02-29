@@ -123,6 +123,12 @@ function handleCopy() {
     </div>
     <div class="setting-item">
       <div class="label">
+        显示主导航
+      </div>
+      <HToggle v-model="settingsStore.settings.menu.enableMainMenu" :disabled="!['head'].includes(settingsStore.settings.menu.menuMode)" />
+    </div>
+    <div class="setting-item">
+      <div class="label">
         主导航切换跳转
         <HTooltip text="开启该功能后，切换主导航时，页面自动跳转至该主导航下，次导航里第一个导航">
           <SvgIcon name="i-ri:question-line" />

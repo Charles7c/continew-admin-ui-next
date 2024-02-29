@@ -27,8 +27,8 @@ export const customLightTheme = {
   '--g-main-sidebar-menu-active-color': '#fff',
   // 次导航
   '--g-sub-sidebar-bg': '#fff',
-  '--g-sub-sidebar-logo-bg': '#333333',
-  '--g-sub-sidebar-logo-color': '#fff',
+  '--g-sub-sidebar-logo-bg': '#fff',
+  '--g-sub-sidebar-logo-color': '#333333',
   '--g-sub-sidebar-menu-color': '#333333',
   '--g-sub-sidebar-menu-hover-bg': '#f0f0f0',
   '--g-sub-sidebar-menu-hover-color': '#333333',
