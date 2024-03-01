@@ -19,12 +19,29 @@
       "base": #909399,
     ),
   ),
+  $fill-color: (
+    "lighter": #f2f3f5,
+  ),
   $border-radius: (
     "base": 2px,
   ),
   $tag: (
     "border-radius": 2px,
   ),
+  $table: (
+    "header-text-color": var(text-color-regular),
+    "row-hover-bg-color": var(--el-fill-color-lighter),
+    "header-bg-color": var(--el-fill-color-lighter),
+  ),
 );
 @use "element-plus/theme-chalk/src/index.scss" as *;
 @use "./element-plus.dark.scss" as *;
+
+.el-table thead th {
+  font-weight: 400;
+}
+
+.el-switch__core {
+  height: 24px;
+  border-radius: 12px;
+}

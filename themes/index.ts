@@ -33,13 +33,13 @@ export const customLightTheme = {
   '--g-sub-sidebar-menu-hover-bg': '#f0f0f0',
   '--g-sub-sidebar-menu-hover-color': '#333333',
   '--g-sub-sidebar-menu-active-bg': '#e6e6e6',
-  '--g-sub-sidebar-menu-active-color': '#1a1a1a',
+  '--g-sub-sidebar-menu-active-color': '#1677FF',
   // 标签栏
   '--g-tabbar-dividers-bg': '#a3a3a3',
   '--g-tabbar-tab-color': '#a3a3a3',
   '--g-tabbar-tab-hover-bg': '#e6e6e6',
   '--g-tabbar-tab-hover-color': '#333333',
-  '--g-tabbar-tab-active-color': '#1a1a1a',
+  '--g-tabbar-tab-active-color': '#1677FF',
 }
 
 export const customDarkTheme = {
