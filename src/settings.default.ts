@@ -41,6 +41,7 @@ const globalSettingsDefault: RecursiveRequired<Settings.all> = {
   },
   toolbar: {
     breadcrumb: true,
+    enableBreadcrumbIcon: false,
     navSearch: true,
     fullscreen: false,
     pageReload: false,

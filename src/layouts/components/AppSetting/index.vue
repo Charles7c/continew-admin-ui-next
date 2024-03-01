@@ -238,6 +238,12 @@ function handleCopy() {
     </div>
     <div class="setting-item">
       <div class="label">
+        面包屑导航是否显示图标
+      </div>
+      <HToggle v-model="settingsStore.settings.toolbar.enableBreadcrumbIcon" :disabled="!settingsStore.settings.toolbar.breadcrumb" />
+    </div>
+    <div class="setting-item">
+      <div class="label">
         导航搜索
         <HTooltip text="对导航进行快捷搜索">
           <SvgIcon name="i-ri:question-line" />

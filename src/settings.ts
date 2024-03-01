@@ -40,7 +40,8 @@ const globalSettings: Settings.all = {
     enableHotkeys: true,
   },
   toolbar: {
-    breadcrumb: false,
+    breadcrumb: true,
+    enableBreadcrumbIcon: true,
     navSearch: true,
     fullscreen: true,
     pageReload: false,

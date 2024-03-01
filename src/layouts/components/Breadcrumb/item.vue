@@ -27,7 +27,7 @@ function onClick() {
       {{ separator }}
     </span>
     <span
-      class="text flex items-center opacity-60"
+      class="text flex items-center gap-0.5 opacity-60"
       :class="{
         'is-link cursor-pointer transition-opacity hover:opacity-100': !!props.to,
       }" @click="onClick"

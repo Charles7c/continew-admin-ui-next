@@ -157,6 +157,11 @@ declare namespace Settings {
      */
     breadcrumb?: boolean
     /**
+     * 是否开启面包屑导航图标显示
+     * @默认值 `false`
+     */
+    enableBreadcrumbIcon?: boolean
+    /**
      * 是否开启导航搜索
      * @默认值 `true`
      */
