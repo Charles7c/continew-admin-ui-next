@@ -19,8 +19,14 @@
       "base": #909399,
     ),
   ),
+  $text-color: (
+    "regular": #42464e,
+  ),
   $fill-color: (
-    "lighter": #f2f3f5,
+    "light": #f6f8fa,
+  ),
+  $dialog: (
+    "border-radius": 4px,
   ),
   $border-radius: (
     "base": 2px,
@@ -30,8 +36,8 @@
   ),
   $table: (
     "header-text-color": var(text-color-regular),
-    "row-hover-bg-color": var(--el-fill-color-lighter),
-    "header-bg-color": var(--el-fill-color-lighter),
+    "row-hover-bg-color": var(--el-fill-color-light),
+    "header-bg-color": var(--el-fill-color-light),
   ),
 );
 @use "element-plus/theme-chalk/src/index.scss" as *;

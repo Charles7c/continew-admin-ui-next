@@ -166,7 +166,43 @@ textarea {
       flex-direction: column;
       overflow: auto;
 
+      .tool-container {
+        .query-bar {
+          display: flex;
+
+          .el-form {
+            .el-form-item {
+              margin-bottom: 12px;
+              margin-left: 10px;
+
+              .el-input {
+                --el-input-width: 400px;
+              }
+
+              .el-select {
+                --el-select-width: 220px;
+              }
+            }
+          }
+        }
+
+        .tool-bar {
+          display: flex;
+          justify-content: end;
+
+          .el-button {
+            width: 32px;
+            margin-left: 10px;
+          }
+        }
+      }
+
       .el-table {
+        border-top: 1px solid var(--el-table-border-color);
+        border-right: 1px solid var(--el-table-border-color);
+        border-left: 1px solid var(--el-table-border-color);
+        border-radius: 4px 4px 0 0;
+
         th.el-table__cell {
           padding: 8px 0;
         }
@@ -176,24 +212,38 @@ textarea {
         }
       }
     }
+  }
+}
 
-    .title-container {
-      padding-top: 20px;
-      padding-bottom: 2px;
-      border-bottom: 1px var(--el-border-color) dashed;
+.el-dialog.general {
+  .el-dialog__header {
+    border-bottom: 1px solid var(--el-border-color-light);
+  }
 
-      .el-form {
-        .el-form-item {
-          margin-right: 15px;
+  .el-dialog__body {
+    padding-top: 20px;
+  }
 
-          .el-input {
-            --el-input-width: 220px;
-          }
+  .el-dialog__footer {
+    border-top: 1px solid var(--el-border-color-light);
+  }
+}
 
-          .el-select {
-            --el-select-width: 220px;
-          }
-        }
+.el-drawer.general {
+  .el-drawer__header {
+    padding-bottom: 20px;
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--el-border-color-light);
+  }
+
+  .el-descriptions {
+    .el-descriptions__body {
+      .el-descriptions__table is-bordered {
+        border-radius: 4px;
+      }
+
+      .el-descriptions__label {
+        font-weight: normal;
       }
     }
   }
