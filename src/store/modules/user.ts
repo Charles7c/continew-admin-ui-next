@@ -3,6 +3,8 @@ import useRouteStore from './route'
 import useMenuStore from './menu'
 import router from '@/router'
 import apiUser from '@/api/modules/user'
+import apiAuth from '@/api/modules/auth'
+import { encryptByRsa } from '@/utils/encrypt'
 
 const useUserStore = defineStore(
   // 唯一ID
@@ -16,21 +18,26 @@ const useUserStore = defineStore(
     const token = ref(localStorage.token ?? '')
     const gender = ref(localStorage.gender ?? '')
     const avatar = ref(localStorage.avatar ?? '')
+    const nickname = ref(localStorage.nickname ?? '')
     const permissions = ref<string[]>([])
     const isLogin = computed(() => {
-      if (token.value) {
-        return true
-      }
-      return false
+      return !!token.value
     })
 
     // 登录
     async function login(data: {
       account: string
       password: string
+      captcha: string
+      uuid: string
     }) {
-      const res = await apiUser.login(data)
-      localStorage.setItem('account', res.data.account)
+      const res = await apiAuth.accountLogin({
+        account: data.account,
+        password: encryptByRsa(data.password),
+        captcha: data.captcha,
+        uuid: data.uuid,
+      })
+      localStorage.setItem('account', data.account)
       localStorage.setItem('token', res.data.token)
       localStorage.setItem('gender', res.data.gender)
       localStorage.setItem('avatar', res.data.avatar)
@@ -41,6 +48,7 @@ const useUserStore = defineStore(
     }
     // 登出
     async function logout(redirect = router.currentRoute.value.fullPath) {
+      await apiAuth.logout()
       localStorage.removeItem('account')
       localStorage.removeItem('token')
       localStorage.removeItem('gender')
@@ -78,6 +86,7 @@ const useUserStore = defineStore(
       token,
       gender,
       avatar,
+      nickname,
       permissions,
       isLogin,
       login,

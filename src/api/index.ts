@@ -17,7 +17,7 @@ api.interceptors.request.use(
     // 设置请求头
     if (request.headers) {
       if (userStore.isLogin) {
-        request.headers.Token = userStore.token
+        request.headers.Authorization = `Bearer ${userStore.token}`
       }
     }
     // 是否将 POST 请求参数进行字符串化处理
@@ -34,23 +34,24 @@ api.interceptors.response.use(
   (response) => {
     /**
      * 全局拦截请求发送后返回的数据，如果数据有报错则在这做全局的错误提示
-     * 假设返回数据格式为：{ status: 1, error: '', data: '' }
-     * 规则是当 status 为 1 时表示请求成功，为 0 时表示接口需要登录或者登录状态失效，需要重新登录
-     * 请求出错时 error 会返回错误信息
+     * 假设返回数据格式为：{ code: 200, msg: '', data: '', success: true, timestamp: 1709560884 }
+     * 规则是当 success 为 true 时表示请求成功，code 为 401 时表示接口需要登录或者登录状态失效，需要重新登录
+     * 请求出错时 msg 会返回错误信息
      */
-    if (response.data.status === 1) {
-      if (response.data.error !== '') {
-        // 错误提示
-        Message.error(response.data.error, {
-          zIndex: 2000,
-        })
-        return Promise.reject(response.data)
-      }
+    const res = response.data
+    if (res.success) {
+      return Promise.resolve(response.data)
     }
-    else {
+    if ([401].includes(res.code)) {
       useUserStore().logout()
     }
-    return Promise.resolve(response.data)
+    else {
+      // 错误提示
+      Message.error(response.data.msg, {
+        zIndex: 2000,
+      })
+    }
+    return Promise.reject(response.data)
   },
   (error) => {
     let message = error.message

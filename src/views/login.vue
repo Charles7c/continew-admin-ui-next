@@ -7,10 +7,11 @@ meta:
 
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
-import { ElMessage } from 'element-plus'
 import Copyright from '@/layouts/components/Copyright/index.vue'
 import useSettingsStore from '@/store/modules/settings'
 import useUserStore from '@/store/modules/user'
+import apiCaptcha from '@/api/modules/common/captcha'
+import type CaptchaImgRes from '@/api/modules/common/captcha'
 
 defineOptions({
   name: 'Login',
@@ -22,22 +23,26 @@ const router = useRouter()
 const settingsStore = useSettingsStore()
 const userStore = useUserStore()
 
-const banner = new URL('../assets/images/login-banner.png', import.meta.url).href
+const banner = new URL('../assets/images/banner.png', import.meta.url).href
 const logo = new URL('../assets/images/logo.svg', import.meta.url).href
 const title = import.meta.env.VITE_APP_TITLE
 
-// 表单类型，login 登录，register 注册，reset 重置密码
+// 表单类型，login 登录
 const formType = ref('login')
 const loading = ref(false)
+const captchaImgBase64 = ref()
 const redirect = ref(route.query.redirect?.toString() ?? settingsStore.settings.home.fullPath)
 
 // 登录
 const loginFormRef = ref<FormInstance>()
 const loginForm = ref({
-  account: localStorage.login_account || '',
-  password: '',
+  account: localStorage.login_account || 'admin', // 演示默认值
+  password: 'admin123', // 演示默认值
+  captcha: '',
+  uuid: '',
   remember: !!localStorage.login_account,
 })
+
 const loginRules = ref<FormRules>({
   account: [
     { required: true, trigger: 'blur', message: '请输入用户名' },
@@ -46,7 +51,14 @@ const loginRules = ref<FormRules>({
     { required: true, trigger: 'blur', message: '请输入密码' },
     { min: 6, max: 18, trigger: 'blur', message: '密码长度为6到18位' },
   ],
+  captcha: [
+    { required: true, trigger: 'blur', message: '请输入验证码' },
+  ],
 })
+
+/**
+ * 登录
+ */
 function handleLogin() {
   loginFormRef.value && loginFormRef.value.validate((valid) => {
     if (valid) {
@@ -61,93 +73,28 @@ function handleLogin() {
         }
         router.push(redirect.value)
       }).catch(() => {
+        getCaptchaImg()
+        loginForm.value.captcha = ''
+      }).finally(() => {
         loading.value = false
       })
     }
   })
 }
 
-// 注册
-const registerFormRef = ref<FormInstance>()
-const registerForm = ref({
-  account: '',
-  captcha: '',
-  password: '',
-  checkPassword: '',
-})
-const registerRules = ref<FormRules>({
-  account: [
-    { required: true, trigger: 'blur', message: '请输入用户名' },
-  ],
-  captcha: [
-    { required: true, trigger: 'blur', message: '请输入验证码' },
-  ],
-  password: [
-    { required: true, trigger: 'blur', message: '请输入密码' },
-    { min: 6, max: 18, trigger: 'blur', message: '密码长度为6到18位' },
-  ],
-  checkPassword: [
-    { required: true, trigger: 'blur', message: '请再次输入密码' },
-    {
-      validator: (rule, value, callback) => {
-        if (value !== registerForm.value.password) {
-          callback(new Error('两次输入的密码不一致'))
-        }
-        else {
-          callback()
-        }
-      },
-    },
-  ],
-})
-function handleRegister() {
-  ElMessage({
-    message: '注册模块仅提供界面演示，无实际功能，需开发者自行扩展',
-    type: 'warning',
-  })
-  registerFormRef.value && registerFormRef.value.validate((valid) => {
-    if (valid) {
-      // 这里编写业务代码
-    }
+/**
+ * 获取图形验证码
+ */
+function getCaptchaImg() {
+  apiCaptcha.captchaImg().then((res: CaptchaImgRes) => {
+    loginForm.value.uuid = res.data.uuid
+    captchaImgBase64.value = res.data.img
   })
 }
 
-// 重置密码
-const resetFormRef = ref<FormInstance>()
-const resetForm = ref({
-  account: localStorage.login_account,
-  captcha: '',
-  newPassword: '',
+onMounted(() => {
+  getCaptchaImg()
 })
-const resetRules = ref<FormRules>({
-  account: [
-    { required: true, trigger: 'blur', message: '请输入用户名' },
-  ],
-  captcha: [
-    { required: true, trigger: 'blur', message: '请输入验证码' },
-  ],
-  newPassword: [
-    { required: true, trigger: 'blur', message: '请输入新密码' },
-    { min: 6, max: 18, trigger: 'blur', message: '密码长度为6到18位' },
-  ],
-})
-function handleReset() {
-  ElMessage({
-    message: '重置密码仅提供界面演示，无实际功能，需开发者自行扩展',
-    type: 'info',
-  })
-  resetFormRef.value && resetFormRef.value.validate((valid) => {
-    if (valid) {
-      // 这里编写业务代码
-    }
-  })
-}
-
-function testAccount(account: string) {
-  loginForm.value.account = account
-  loginForm.value.password = '123456'
-  handleLogin()
-}
 </script>
 
 <template>
@@ -161,7 +108,7 @@ function testAccount(account: string) {
       <ElForm v-show="formType === 'login'" ref="loginFormRef" :model="loginForm" :rules="loginRules" class="login-form">
         <div class="title-container">
           <h3 class="title">
-            欢迎来到 {{ title }} ! 👋🏻
+            欢迎使用 {{ title }}
           </h3>
         </div>
         <div>
@@ -179,122 +126,61 @@ function testAccount(account: string) {
               </template>
             </ElInput>
           </ElFormItem>
+          <ElFormItem prop="captcha">
+            <ElInput v-model="loginForm.captcha" placeholder="验证码" :maxlength="4" type="text" tabindex="3" style="flex: 1 1;" @keyup.enter="handleLogin">
+              <template #prefix>
+                <SvgIcon name="i-ri:checkbox-circle-fill" />
+              </template>
+            </ElInput>
+            <img
+              :src="captchaImgBase64"
+              alt="验证码"
+              class="captcha"
+              @click="getCaptchaImg"
+            >
+          </ElFormItem>
         </div>
         <div class="flex-bar">
           <ElCheckbox v-model="loginForm.remember">
             记住我
           </ElCheckbox>
-          <ElLink type="primary" :underline="false" @click="formType = 'reset'">
-            忘记密码了?
-          </ElLink>
         </div>
         <ElButton :loading="loading" type="primary" size="large" style="width: 100%;" @click.prevent="handleLogin">
           登录
         </ElButton>
-        <div class="sub-link">
-          <span class="text">还没有帐号?</span>
-          <ElLink type="primary" :underline="false" @click="formType = 'register'">
-            创建新帐号
-          </ElLink>
-        </div>
         <div style="margin-top: 20px; margin-bottom: -20px; text-align: center;">
-          <ElDivider>演示账号一键登录</ElDivider>
-          <ElButton type="primary" size="small" plain @click="testAccount('admin')">
-            admin
+          <ElDivider>其他登录方式</ElDivider>
+          <ElButton circle class="social">
+            <template #icon>
+              <svg
+                class="icon"
+                fill="#C71D23"
+                role="img"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>码云</title>
+                <path
+                  d="M11.984 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.016 0zm6.09 5.333c.328 0 .593.266.592.593v1.482a.594.594 0 0 1-.593.592H9.777c-.982 0-1.778.796-1.778 1.778v5.63c0 .327.266.592.593.592h5.63c.982 0 1.778-.796 1.778-1.778v-.296a.593.593 0 0 0-.592-.593h-4.15a.592.592 0 0 1-.592-.592v-1.482a.593.593 0 0 1 .593-.592h6.815c.327 0 .593.265.593.592v3.408a4 4 0 0 1-4 4H5.926a.593.593 0 0 1-.593-.593V9.778a4.444 4.444 0 0 1 4.445-4.444h8.296Z"
+                />
+              </svg>
+            </template>
           </ElButton>
-          <ElButton size="small" plain @click="testAccount('test')">
-            test
+          <ElButton circle class="social">
+            <template #icon>
+              <svg
+                class="icon"
+                role="img"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>GitHub</title>
+                <path
+                  d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+                />
+              </svg>
+            </template>
           </ElButton>
-        </div>
-      </ElForm>
-      <ElForm v-show="formType === 'register'" ref="registerFormRef" :model="registerForm" :rules="registerRules" class="login-form" auto-complete="on">
-        <div class="title-container">
-          <h3 class="title">
-            探索从这里开始! 🚀
-          </h3>
-        </div>
-        <div>
-          <ElFormItem prop="account">
-            <ElInput v-model="registerForm.account" placeholder="用户名" tabindex="1">
-              <template #prefix>
-                <SvgIcon name="i-ri:user-3-fill" />
-              </template>
-            </ElInput>
-          </ElFormItem>
-          <ElFormItem prop="captcha">
-            <ElInput v-model="registerForm.captcha" placeholder="验证码" tabindex="2">
-              <template #prefix>
-                <SvgIcon name="i-ic:baseline-verified-user" />
-              </template>
-              <template #append>
-                <ElButton>发送验证码</ElButton>
-              </template>
-            </ElInput>
-          </ElFormItem>
-          <ElFormItem prop="password">
-            <ElInput v-model="registerForm.password" type="password" placeholder="密码" tabindex="3" show-password>
-              <template #prefix>
-                <SvgIcon name="i-ri:lock-2-fill" />
-              </template>
-            </ElInput>
-          </ElFormItem>
-          <ElFormItem prop="checkPassword">
-            <ElInput v-model="registerForm.checkPassword" type="password" placeholder="确认密码" tabindex="4" show-password>
-              <template #prefix>
-                <SvgIcon name="i-ri:lock-2-fill" />
-              </template>
-            </ElInput>
-          </ElFormItem>
-        </div>
-        <ElButton :loading="loading" type="primary" size="large" style="width: 100%; margin-top: 20px;" @click.prevent="handleRegister">
-          注册
-        </ElButton>
-        <div class="sub-link">
-          <span class="text">已经有帐号?</span>
-          <ElLink type="primary" :underline="false" @click="formType = 'login'">
-            去登录
-          </ElLink>
-        </div>
-      </ElForm>
-      <ElForm v-show="formType === 'reset'" ref="resetFormRef" :model="resetForm" :rules="resetRules" class="login-form">
-        <div class="title-container">
-          <h3 class="title">
-            忘记密码了? 🔒
-          </h3>
-        </div>
-        <div>
-          <ElFormItem prop="account">
-            <ElInput v-model="resetForm.account" placeholder="用户名" type="text" tabindex="1">
-              <template #prefix>
-                <SvgIcon name="i-ri:user-3-fill" />
-              </template>
-            </ElInput>
-          </ElFormItem>
-          <ElFormItem prop="captcha">
-            <ElInput v-model="resetForm.captcha" placeholder="验证码" type="text" tabindex="2">
-              <template #prefix>
-                <SvgIcon name="i-ic:baseline-verified-user" />
-              </template>
-              <template #append>
-                <ElButton>发送验证码</ElButton>
-              </template>
-            </ElInput>
-          </ElFormItem>
-          <ElFormItem prop="newPassword">
-            <ElInput v-model="resetForm.newPassword" type="password" placeholder="新密码" tabindex="3" show-password>
-              <template #prefix>
-                <SvgIcon name="i-ri:lock-2-fill" />
-              </template>
-            </ElInput>
-          </ElFormItem>
-        </div>
-        <ElButton :loading="loading" type="primary" size="large" style="width: 100%; margin-top: 20px;" @click.prevent="handleReset">
-          确认
-        </ElButton>
-        <div class="sub-link">
-          <ElLink type="primary" :underline="false" @click="formType = 'login'">
-            去登录
-          </ElLink>
         </div>
       </ElForm>
     </div>
@@ -317,7 +203,7 @@ function testAccount(account: string) {
     transform: translateX(0) translateY(0);
 
     .login-banner {
-      width: 100%;
+      width: 0;
       padding: 20px 0;
 
       .banner {
@@ -364,7 +250,7 @@ function testAccount(account: string) {
   justify-content: space-between;
   overflow: hidden;
   background-color: var(--g-container-bg);
-  border-radius: 10px;
+  border-radius: 2px;
   box-shadow: var(--el-box-shadow);
   transform: translateX(-50%) translateY(-50%);
 
@@ -372,12 +258,12 @@ function testAccount(account: string) {
     position: relative;
     width: 450px;
     overflow: hidden;
-    background-color: var(--g-bg);
+    background-color: #5e98ff;
 
     .banner {
       width: 100%;
 
-      @include position-center(y);
+      @include position-center(xy);
     }
 
     .logo {
@@ -385,6 +271,7 @@ function testAccount(account: string) {
       top: 20px;
       left: 20px;
       height: 30px;
+      background-color: var(--g-container-bg);
       border-radius: 4px;
       box-shadow: var(--el-box-shadow-light);
     }
@@ -408,6 +295,13 @@ function testAccount(account: string) {
         font-weight: bold;
         color: var(--el-text-color-primary);
       }
+    }
+
+    .captcha {
+      width: 111px;
+      height: 36px;
+      margin: 0 0 0 5px;
+      cursor: pointer;
     }
   }
 
@@ -440,6 +334,8 @@ function testAccount(account: string) {
   }
 
   :deep(.el-divider__text) {
+    font-size: 12px;
+    color: var(--el-text-color-placeholder);
     background-color: var(--g-container-bg);
   }
 
@@ -448,19 +344,6 @@ function testAccount(account: string) {
     align-items: center;
     justify-content: space-between;
     margin-bottom: 20px;
-  }
-
-  .sub-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 20px;
-    font-size: 14px;
-    color: var(--el-text-color-secondary);
-
-    .text {
-      margin-right: 10px;
-    }
   }
 }
 
